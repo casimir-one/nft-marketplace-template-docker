@@ -50,16 +50,16 @@ services:
       - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
       - "traefik.http.routers.echo2.entrypoints=web"
       - "traefik.http.routers.echo2.entrypoints=websecure"
+      - "traefik.http.routers.echo2.tls.certresolver=myresolver"
       - "traefik.http.routers.echo2.service=appchain_http"
-
       - "traefik.http.services.appchain_http.loadbalancer.server.port=5678"
       
-      
+
       - "traefik.http.routers.echo3.rule=Host(`cas-nft-marketplace-web-sockets-1.deip.world`)"
       - "traefik.http.routers.echo3.entrypoints=web"
       - "traefik.http.routers.echo3.entrypoints=websecure"
+      - "traefik.http.routers.echo3.tls.certresolver=myresolver"
       - "traefik.http.routers.echo3.service=appchain_ws"
-
       - "traefik.http.services.appchain_ws.loadbalancer.server.port=5678"
 
 

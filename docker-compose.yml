@@ -32,9 +32,9 @@ services:
     container_name: substrate-node
     restart: always
     command: appchain-deip --dev --ws-external --rpc-external --rpc-methods=Unsafe --rpc-cors=all --base-path=/var/lib/deipd
-    ports:
-      - "9944:9944"
-      - "9933:9933"
+    expose:
+      - "9944"
+      - "9933"
     volumes:
       - chainstorage:/var/lib/deipd
     deploy:
@@ -49,14 +49,14 @@ services:
       - "traefik.http.routers.node_ws.rule=Host(`demo.appchain.ws.casimir.one`)"
       - "traefik.http.routers.node_ws.entrypoints=websecure"
       - "traefik.http.routers.node_ws.tls.certresolver=myresolver"
-      - "traefik.http.routers.node_ws.service=appchain_ws"
-      - "traefik.http.services.appchain_ws.loadbalancer.server.port=9944"
+      - "traefik.http.routers.node_ws.service=node_ws"
+      - "traefik.http.services.node_ws.loadbalancer.server.port=9944"
       
       - "traefik.http.routers.node_http.rule=Host(`demo.appchain.http.casimir.one`)"
       - "traefik.http.routers.node_http.entrypoints=websecure"
       - "traefik.http.routers.node_http.tls.certresolver=myresolver"
-      - "traefik.http.routers.node_http.service=appchain_http"
-      - "traefik.http.services.appchain_http.loadbalancer.server.port=9933"
+      - "traefik.http.routers.node_http.service=node_http"
+      - "traefik.http.services.node_http.loadbalancer.server.port=9933"
 
 
   web-server:
@@ -69,8 +69,6 @@ services:
     links:
       - substrate-node
       - storage
-    # ports:
-    #   - "9091:80"
     environment:
       NODE_ENV: development
       PROTOCOL: 2
@@ -95,7 +93,7 @@ services:
       - "traefik.http.routers.webserver_http.service=webserver_http"
       - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
 
-      - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver_ws.ws.casimir.one`)"
+      - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver.ws.casimir.one`)"
       - "traefik.http.routers.webserver_ws.entrypoints=websecure"
       - "traefik.http.routers.webserver_ws.tls.certresolver=myresolver"
       - "traefik.http.routers.webserver_ws.service=webserver_ws"
@@ -140,8 +138,6 @@ services:
     image: mongo:3.6.5
     container_name: storage
     restart: always
-    # ports:
-    #   - "27117:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=casimir
       - MONGO_INITDB_ROOT_PASSWORD=xZ6GZunKhaUzX44J

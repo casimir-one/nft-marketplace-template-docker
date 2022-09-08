@@ -168,8 +168,11 @@ services:
 
       - "traefik.enable=true"
       - "traefik.tcp.routers.storage.entrypoints=mongodb"
-      - "traefik.tcp.routers.storage.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.storage.tls=false"
+      - traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)
+      - traefik.tcp.routers.storage.tls=true
+      - traefik.tcp.routers.storage.tls.certresolver=myresolver
+      # - "traefik.tcp.routers.storage.rule=HostSNI(`*`)"
+      # - "traefik.tcp.routers.storage.tls=false"
       - "traefik.tcp.services.storage.loadbalancer.server.port=27017"
       - "traefik.tcp.routers.storage.service=storage"
 

@@ -33,6 +33,16 @@ services:
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=myresolver"
 
+  whoami2:
+    image: "traefik/whoami"
+    container_name: "simple-service-2"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
+      - "traefik.http.routers.whoami2.entrypoints=web"
+      - "traefik.http.routers.whoami2.entrypoints=websecure"
+      - "traefik.http.routers.whoami2.tls.certresolver=myresolver"
+
 volumes:
   letsencrypt:
     external: true

@@ -143,6 +143,7 @@ services:
       - web-server
     links:
       - substrate-node
+      - web-server
     # ports:
     #   - "8080:80"
     environment:

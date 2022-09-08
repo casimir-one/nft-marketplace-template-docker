@@ -89,17 +89,17 @@ services:
       - logstorage:/usr/src/app/logs
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.http.casimir.one`)"
-      - "traefik.http.routers.webserver.entrypoints=websecure"
-      - "traefik.http.routers.webserver.tls.certresolver=myresolver"
-      - "traefik.http.routers.webserver.service=webserver"
-      - "traefik.http.services.webserver.loadbalancer.server.port=80"
+      - "traefik.http.routers.webserver_http.rule=Host(`demo.webserver.http.casimir.one`)"
+      - "traefik.http.routers.webserver_http.entrypoints=websecure"
+      - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
+      - "traefik.http.routers.webserver_http.service=webserver_http"
+      - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
 
-      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.ws.casimir.one`)"
-      - "traefik.http.routers.webserver.entrypoints=websecure"
-      - "traefik.http.routers.webserver.tls.certresolver=myresolver"
-      - "traefik.http.routers.webserver.service=webserver"
-      - "traefik.http.services.webserver.loadbalancer.server.port=443"
+      - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver_ws.ws.casimir.one`)"
+      - "traefik.http.routers.webserver_ws.entrypoints=websecure"
+      - "traefik.http.routers.webserver_ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.webserver_ws.service=webserver_ws"
+      - "traefik.http.services.webserver_ws.loadbalancer.server.port=443"
 
 
   web-client:

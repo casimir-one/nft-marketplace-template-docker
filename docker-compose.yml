@@ -83,7 +83,7 @@ services:
       DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.casimir.one:27017/casimir-storage?authSource=admin
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       CHAIN_BLOCK_INTERVAL_MILLIS: 6000
-      TENANT: "0000000000000000000000000000000000000001"
+      TENANT: "6561845613164402145092105428472817005070"
       TENANT_PRIV_KEY: "1d24d7eda9803457dcea233872d513f4468d41b7a8b77555c161be1d1917330c"
       TENANT_PORTAL: '{"privKey":"1265fe9c39e665908f2d6fda3f0371d34de255e4420eb0aaa2907a8d80836d99","pubKey":"22688b484f3e0dde55bd52221fd9ba806c8af5388e02543e14fbf3a639d4d825"}'
       TENANT_HOT_WALLET: '{"privKey":"38b6bf99e4b06e64cafeeedf1f418f8f03b472e14ece7f5e5cb4d9aa9e6caef7","daoId":"20d1c50067827d1ba447d1be4a4d5129fb0583ed"}'
@@ -121,7 +121,7 @@ services:
     environment:
       NODE_ENV: development
       PROTOCOL: 2
-      TENANT: "0000000000000000000000000000000000000001"
+      TENANT: "6561845613164402145092105428472817005070"
       # web server ws and http
       DEIP_SERVER_URL: https://demo.webserver.http.casimir.one
       DEIP_WEB_SOCKET_URL: wss://demo.webserver.ws.casimir.one

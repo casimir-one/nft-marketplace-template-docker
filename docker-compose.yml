@@ -70,9 +70,9 @@ services:
     container_name: substrate-node
     restart: always
     command: appchain-deip --dev --ws-external --rpc-external --rpc-methods=Unsafe --rpc-cors=all --base-path=/var/lib/deipd
-    # ports:
-    #   - "9944:9944"
-    #   - "9933:9933"
+    ports:
+      - "9944:9944"
+      - "9933:9933"
     volumes:
       - chainstorage:/var/lib/deipd
     deploy:
@@ -159,7 +159,13 @@ services:
       WALLET_URL: https://demo.wallet.casimir.one
       TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webclient.rule=Host(`demo.casimir.one`)"
+      - "traefik.http.routers.webclient.entrypoints=websecure"
+      - "traefik.http.routers.webclient.tls.certresolver=myresolver"
+      - "traefik.http.routers.webclient.service=webclient"
+      - "traefik.http.services.webclient.loadbalancer.server.port=80"
 
   storage:
     image: mongo:3.6.5

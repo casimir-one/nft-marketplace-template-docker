@@ -23,29 +23,27 @@ services:
       - "letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  whoami:
-    # image: "traefik/whoami"
-    # container_name: "simple-service"
+  echo1:
     image: hashicorp/http-echo
+    container_name: "echo-server-1"
     command: ['-text', 'This is the FIRST contaner']
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`cas-nft-marketplace.deip.world`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+      - "traefik.http.routers.echo1.rule=Host(`cas-nft-marketplace.deip.world`)"
+      - "traefik.http.routers.echo1.entrypoints=web"
+      - "traefik.http.routers.echo1.entrypoints=websecure"
+      - "traefik.http.routers.echo1.tls.certresolver=myresolver"
 
-  whoami2:
-    # image: "traefik/whoami"
-    # container_name: "simple-service-2"
+  echo2:
     image: hashicorp/http-echo
+    container_name: "echo-server-2"
     command: ['-text', 'This is the SECOND contaner']
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      - "traefik.http.routers.whoami2.entrypoints=web"
-      - "traefik.http.routers.whoami2.entrypoints=websecure"
-      - "traefik.http.routers.whoami2.tls.certresolver=myresolver"
+      - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
+      - "traefik.http.routers.echo2.entrypoints=web"
+      - "traefik.http.routers.echo2.entrypoints=websecure"
+      - "traefik.http.routers.echo2.tls.certresolver=myresolver"
 
 volumes:
   letsencrypt:

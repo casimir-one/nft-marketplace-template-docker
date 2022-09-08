@@ -13,8 +13,8 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.mongodb.address=:27017"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=egortsaryk@gmail.com"
@@ -157,14 +157,21 @@ services:
       # - "traefik.http.routers.storage.service=storage"
       # - "traefik.http.services.storage.loadbalancer.server.port=27017"
 
-      - traefik.enable=true
-      - traefik.tcp.routers.storage.entrypoints=mongodb
-      - traefik.tcp.routers.storage.service=storage
-      - traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)
-      - traefik.tcp.routers.storage.tls=true
-      - traefik.tcp.routers.storage.tls.certresolver=myresolver
-      - traefik.tcp.routers.storage.tls.domains[0].main=demo.storage.casimir.one
-      - traefik.tcp.services.storage.loadbalancer.server.port=27017
+      # - traefik.enable=true
+      # - traefik.tcp.routers.storage.entrypoints=mongodb
+      # - traefik.tcp.routers.storage.service=storage
+      # - traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)
+      # - traefik.tcp.routers.storage.tls=true
+      # - traefik.tcp.routers.storage.tls.certresolver=myresolver
+      # - traefik.tcp.routers.storage.tls.domains[0].main=demo.storage.casimir.one
+      # - traefik.tcp.services.storage.loadbalancer.server.port=27017
+
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.storage.entrypoints=mongodb"
+      - "traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)"
+      - "traefik.tcp.routers.storage.tls=false"
+      - "traefik.tcp.services.storage.loadbalancer.server.port=27017"
+      - "traefik.tcp.routers.storage.service=storage"
 
 
 volumes:

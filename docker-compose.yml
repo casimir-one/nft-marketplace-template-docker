@@ -26,44 +26,6 @@ services:
       - "letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  echo1:
-    image: hashicorp/http-echo
-    container_name: "echo-server-1"
-    command: ['-text', 'This is the FIRST contaner']
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.echo1.rule=Host(`cas-nft-marketplace.deip.world`)"
-      # - "traefik.http.routers.echo1.entrypoints=web"
-      - "traefik.http.routers.echo1.entrypoints=websecure"
-      - "traefik.http.routers.echo1.tls.certresolver=myresolver"
-
-  echo2:
-    image: hashicorp/http-echo
-    container_name: "echo-server-2"
-    command: ['-text', 'This is the SECOND contaner']
-    labels:
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      # - "traefik.http.routers.echo2.entrypoints=web"
-      # - "traefik.http.routers.echo2.entrypoints=websecure"
-      # - "traefik.http.routers.echo2.tls.certresolver=myresolver"
-
-      - "traefik.enable=true"
-      - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      # - "traefik.http.routers.echo2.entrypoints=web"
-      - "traefik.http.routers.echo2.entrypoints=websecure"
-      - "traefik.http.routers.echo2.tls.certresolver=myresolver"
-      - "traefik.http.routers.echo2.service=appchain_http"
-      - "traefik.http.services.appchain_http.loadbalancer.server.port=5678"
-      
-
-      - "traefik.http.routers.echo3.rule=Host(`cas-nft-marketplace-web-sockets-1.deip.world`)"
-      # - "traefik.http.routers.echo3.entrypoints=web"
-      - "traefik.http.routers.echo3.entrypoints=websecure"
-      - "traefik.http.routers.echo3.tls.certresolver=myresolver"
-      - "traefik.http.routers.echo3.service=appchain_ws"
-      - "traefik.http.services.appchain_ws.loadbalancer.server.port=5678"
-
 
   substrate-node:
     image: deipworld/appchain-deip:latest
@@ -127,11 +89,17 @@ services:
       - logstorage:/usr/src/app/logs
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.casimir.one`)"
+      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.http.casimir.one`)"
       - "traefik.http.routers.webserver.entrypoints=websecure"
       - "traefik.http.routers.webserver.tls.certresolver=myresolver"
       - "traefik.http.routers.webserver.service=webserver"
       - "traefik.http.services.webserver.loadbalancer.server.port=80"
+
+      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.ws.casimir.one`)"
+      - "traefik.http.routers.webserver.entrypoints=websecure"
+      - "traefik.http.routers.webserver.tls.certresolver=myresolver"
+      - "traefik.http.routers.webserver.service=webserver"
+      - "traefik.http.services.webserver.loadbalancer.server.port=443"
 
 
   web-client:
@@ -166,6 +134,7 @@ services:
       - "traefik.http.routers.webclient.tls.certresolver=myresolver"
       - "traefik.http.routers.webclient.service=webclient"
       - "traefik.http.services.webclient.loadbalancer.server.port=80"
+
 
   storage:
     image: mongo:3.6.5

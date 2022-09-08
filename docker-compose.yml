@@ -48,7 +48,6 @@ services:
       # - "traefik.http.routers.echo2.entrypoints=websecure"
       # - "traefik.http.routers.echo2.tls.certresolver=myresolver"
 
-
       - "traefik.enable=true"
       - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
       # - "traefik.http.routers.echo2.entrypoints=web"
@@ -66,6 +65,127 @@ services:
       - "traefik.http.services.appchain_ws.loadbalancer.server.port=5678"
 
 
+  substrate-node:
+    image: deipworld/appchain-deip:latest
+    container_name: substrate-node
+    restart: always
+    command: appchain-deip --dev --ws-external --rpc-external --rpc-methods=Unsafe --rpc-cors=all --base-path=/var/lib/deipd
+    # ports:
+    #   - "9944:9944"
+    #   - "9933:9933"
+    volumes:
+      - chainstorage:/var/lib/deipd
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 2048M
+        reservations:
+          memory: 1024M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node_ws.rule=Host(`demo.appchain.ws.casimir.one`)"
+      - "traefik.http.routers.node_ws.entrypoints=websecure"
+      - "traefik.http.routers.node_ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.node_ws.service=appchain_ws"
+      - "traefik.http.services.appchain_ws.loadbalancer.server.port=9944"
+      
+      - "traefik.http.routers.node_http.rule=Host(`demo.appchain.http.casimir.one`)"
+      - "traefik.http.routers.node_http.entrypoints=websecure"
+      - "traefik.http.routers.node_http.tls.certresolver=myresolver"
+      - "traefik.http.routers.node_http.service=appchain_http"
+      - "traefik.http.services.appchain_http.loadbalancer.server.port=9933"
+
+
+  web-server:
+    image: deipworld/casimir-nft-marketplace-web-server:latest
+    container_name: web-server
+    restart: always
+    depends_on:
+      - substrate-node
+      - storage
+    links:
+      - substrate-node
+      - storage
+    # ports:
+    #   - "9091:80"
+    environment:
+      NODE_ENV: development
+      PROTOCOL: 2
+      PORT: 80
+      DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
+      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.storage.casimir.one/casimir-storage?authSource=admin
+      CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      CHAIN_BLOCK_INTERVAL_MILLIS: 6000
+      TENANT: "0000000000000000000000000000000000000001"
+      TENANT_PRIV_KEY: "1d24d7eda9803457dcea233872d513f4468d41b7a8b77555c161be1d1917330c"
+      TENANT_PORTAL: '{"privKey":"1265fe9c39e665908f2d6fda3f0371d34de255e4420eb0aaa2907a8d80836d99","pubKey":"22688b484f3e0dde55bd52221fd9ba806c8af5388e02543e14fbf3a639d4d825"}'
+      TENANT_HOT_WALLET: '{"privKey":"38b6bf99e4b06e64cafeeedf1f418f8f03b472e14ece7f5e5cb4d9aa9e6caef7","daoId":"20d1c50067827d1ba447d1be4a4d5129fb0583ed"}'
+      TENANT_FILE_STORAGE_TYPE: 1
+    volumes:
+      - offchainstorage:/usr/src/app/files
+      - logstorage:/usr/src/app/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webserver.rule=Host(`demo.webserver.casimir.one`)"
+      - "traefik.http.routers.webserver.entrypoints=websecure"
+      - "traefik.http.routers.webserver.tls.certresolver=myresolver"
+      - "traefik.http.routers.webserver.service=webserver"
+      - "traefik.http.services.webserver.loadbalancer.server.port=80"
+
+
+  web-client:
+    image: deipworld/casimir-nft-marketplace-web-client:latest
+    container_name: web-client
+    restart: always
+    depends_on:
+      - substrate-node
+      - web-server
+    links:
+      - substrate-node
+    # ports:
+    #   - "8080:80"
+    environment:
+      NODE_ENV: development
+      PROTOCOL: 2
+      TENANT: "0000000000000000000000000000000000000001"
+      # web server ws and http
+      DEIP_SERVER_URL: https://demo.webserver.http.casimir.one
+      DEIP_WEB_SOCKET_URL: wss://demo.webserver.ws.casimir.one
+      # chain node
+      DEIP_FULL_NODE_URL: wss://demo.appchain.ws.casimir.one
+      # wallet
+      WALLET_URL: https://demo.wallet.casimir.one
+      TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
+      CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+
+
+  storage:
+    image: mongo:3.6.5
+    container_name: storage
+    restart: always
+    # ports:
+    #   - "27117:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=casimir
+      - MONGO_INITDB_ROOT_PASSWORD=xZ6GZunKhaUzX44J
+    volumes: 
+      - offchainstorage:/data/db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.storage.rule=Host(`demo.storage.casimir.one`)"
+      - "traefik.http.routers.storage.entrypoints=websecure"
+      - "traefik.http.routers.storage.tls.certresolver=myresolver"
+      - "traefik.http.routers.storage.service=storage"
+      - "traefik.http.services.storage.loadbalancer.server.port=27017"
+
+
 volumes:
   letsencrypt:
+    external: true
+  chainstorage:
+    external: true
+  offchainstorage:
+    external: true
+  logstorage:
     external: true

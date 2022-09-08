@@ -30,7 +30,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.echo1.rule=Host(`cas-nft-marketplace.deip.world`)"
-      - "traefik.http.routers.echo1.entrypoints=web"
+      # - "traefik.http.routers.echo1.entrypoints=web"
       - "traefik.http.routers.echo1.entrypoints=websecure"
       - "traefik.http.routers.echo1.tls.certresolver=myresolver"
 
@@ -48,7 +48,7 @@ services:
 
       - "traefik.enable=true"
       - "traefik.http.routers.echo2.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      - "traefik.http.routers.echo2.entrypoints=web"
+      # - "traefik.http.routers.echo2.entrypoints=web"
       - "traefik.http.routers.echo2.entrypoints=websecure"
       - "traefik.http.routers.echo2.tls.certresolver=myresolver"
       - "traefik.http.routers.echo2.service=appchain_http"
@@ -56,26 +56,11 @@ services:
       
 
       - "traefik.http.routers.echo3.rule=Host(`cas-nft-marketplace-web-sockets-1.deip.world`)"
-      - "traefik.http.routers.echo3.entrypoints=web"
+      # - "traefik.http.routers.echo3.entrypoints=web"
       - "traefik.http.routers.echo3.entrypoints=websecure"
       - "traefik.http.routers.echo3.tls.certresolver=myresolver"
       - "traefik.http.routers.echo3.service=appchain_ws"
       - "traefik.http.services.appchain_ws.loadbalancer.server.port=5678"
-
-
-      # - "traefik.http.routers.vscode.entrypoints=web"
-      # - "traefik.http.routers.vscode.entrypoints=websecure"
-      # - "traefik.vscode.backend=vscode2"
-      # - "traefik.vscode.frontend.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      # - "traefik.vscode.port=5678"
-
-      # - "traefik.http.routers.app2.entrypoints=web"
-      # - "traefik.http.routers.app2.entrypoints=websecure"
-      # - "traefik.app.backend=app2"
-      # - "traefik.app.frontend.rule=Host(`cas-nft-marketplace-web-sockets-1.deip.world`)"
-      # - "traefik.app.port=5678"
-
-
 
 
 volumes:

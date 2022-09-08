@@ -69,10 +69,12 @@ services:
     links:
       - substrate-node
       - storage
+    expose:
+      - "80"
+      - "443"
     environment:
       NODE_ENV: development
       PROTOCOL: 2
-      PORT: 80
       DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
       DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.storage.casimir.one/casimir-storage?authSource=admin
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'

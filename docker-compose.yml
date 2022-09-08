@@ -50,13 +50,13 @@ services:
       - "traefik.http.routers.vscode.entrypoints=websecure"
       - "traefik.vscode.backend=vscode2"
       - "traefik.vscode.frontend.rule=Host(`cas-nft-marketplace-web-server.deip.world`)"
-      - "traefik.vscode.port=5678"
+      # - "traefik.vscode.port=5678"
 
       - "traefik.http.routers.app2.entrypoints=web"
       - "traefik.http.routers.app2.entrypoints=websecure"
       - "traefik.app.backend=app2"
       - "traefik.app.frontend.rule=Host(`cas-nft-marketplace-web-sockets-1.deip.world`)"
-      - "traefik.app.port=5678"
+      # - "traefik.app.port=5678"
 
 volumes:
   letsencrypt:

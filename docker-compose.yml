@@ -12,6 +12,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.mongodb.address=:27017"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
@@ -150,7 +151,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.storage.rule=Host(`demo.storage.casimir.one`)"
-      - "traefik.http.routers.storage.entrypoints=websecure"
+      - "traefik.http.routers.storage.entrypoints=mongodb"
       - "traefik.http.routers.storage.tls.certresolver=myresolver"
       - "traefik.http.routers.storage.service=storage"
       - "traefik.http.services.storage.loadbalancer.server.port=27017"

@@ -73,12 +73,12 @@ services:
       - storage
     expose:
       - "80"
-      - "9083"
+      - "8080"
     environment:
       NODE_ENV: development
       PROTOCOL: 2
       PORT: 80
-      WS_PORT: 9083
+      WS_PORT: 8080
       DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
       DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.casimir.one:27017/casimir-storage?authSource=admin
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
@@ -94,16 +94,16 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webserver_http.rule=Host(`demo.webserver.http.casimir.one`)"
-      - "traefik.http.routers.webserver_http.entrypoints=websecure"
+      - "traefik.http.routers.webserver_http.entrypoints=web"
       - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
       - "traefik.http.routers.webserver_http.service=webserver_http"
       - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
 
       - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver.ws.casimir.one`)"
-      - "traefik.http.routers.webserver_ws.entrypoints=websecure"
+      - "traefik.http.routers.webserver_ws.entrypoints=web"
       - "traefik.http.routers.webserver_ws.tls.certresolver=myresolver"
       - "traefik.http.routers.webserver_ws.service=webserver_ws"
-      - "traefik.http.services.webserver_ws.loadbalancer.server.port=9083"
+      - "traefik.http.services.webserver_ws.loadbalancer.server.port=8080"
 
 
   web-client:

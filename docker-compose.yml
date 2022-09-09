@@ -208,6 +208,18 @@ services:
       - zookeeper
 
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=casimir
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+
   deip-event-proxy:
    image: "deipworld/event-proxy"
    command: "event-proxy --config=/event-proxy.toml"
@@ -226,17 +238,6 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
       - kafka
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "8085:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=casimir
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
 
 

@@ -211,13 +211,20 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui
     container_name: kafka-ui
-    ports:
-      - "8085:8080"
+    expose:
+      - "8080"
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=casimir
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kafkaui.rule=Host(`demo.kafka.casimir.one`)"
+      - "traefik.http.routers.kafkaui.entrypoints=websecure"
+      - "traefik.http.routers.kafkaui.tls.certresolver=myresolver"
+      - "traefik.http.routers.kafkaui.service=kafkaui"
+      - "traefik.http.services.kafkaui.loadbalancer.server.port=8080"
 
 
   deip-event-proxy:

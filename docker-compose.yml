@@ -122,9 +122,11 @@ services:
     depends_on:
       - substrate-node
       - web-server
+      - kafka
     links:
       - substrate-node
       - web-server
+      - kafka
     # ports:
     #   - "8080:80"
     environment:
@@ -140,6 +142,15 @@ services:
       WALLET_URL: https://demo.wallet.casimir.one
       TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      QUEUE_SERVICE: kafka
+      KAFKA_CLIENT_ID: offchain
+      KAFKA_BROKER_URLS: '["kafka:9092"]'
+      KAFKA_APP_GROUP_ID: nft-marketplace-app-group-id
+      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group-id
+      KAFKA_APP_TOPIC: nft-marketplace-app-topic
+      KAFKA_CHAIN_TOPIC: blockchain
+      # KAFKA_USER=my-user
+      # KAFKA_PASSWORD=zrQcU3Pux4c9
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webclient.rule=Host(`demo.casimir.one`)"

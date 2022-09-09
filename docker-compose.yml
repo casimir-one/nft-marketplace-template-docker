@@ -251,11 +251,12 @@ services:
     expose:
       - "8080"
     environment:
-      DW_API_URL: http://demo.wallet.webserver.casimir.one
-      DW_NETWORK: wss://demo.appchain.ws.casimir.one
-      DW_PROTOCOL: 2
-      DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
-      DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT: 1000000000000000000000
+      # Envs are injected to static content :(
+      #DW_API_URL: https://demo.wallet.webserver.casimir.one
+      #DW_NETWORK: wss://demo.appchain.ws.casimir.one
+      #DW_PROTOCOL: 2
+      #DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      #DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT: 1000000000000000000000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webwallet.rule=Host(`demo.wallet.casimir.one`)"

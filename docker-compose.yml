@@ -250,7 +250,7 @@ services:
       - web-wallet-server
     expose:
       - "8080"
-    environment:
+   #environment:
       # Envs are injected to static content :(
       #DW_API_URL: https://demo.wallet.webserver.casimir.one
       #DW_NETWORK: wss://demo.appchain.ws.casimir.one

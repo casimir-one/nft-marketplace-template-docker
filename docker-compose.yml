@@ -89,6 +89,15 @@ services:
       TENANT_PORTAL: '{"privKey":"1265fe9c39e665908f2d6fda3f0371d34de255e4420eb0aaa2907a8d80836d99","pubKey":"22688b484f3e0dde55bd52221fd9ba806c8af5388e02543e14fbf3a639d4d825"}'
       TENANT_HOT_WALLET: '{"privKey":"38b6bf99e4b06e64cafeeedf1f418f8f03b472e14ece7f5e5cb4d9aa9e6caef7","daoId":"20d1c50067827d1ba447d1be4a4d5129fb0583ed"}'
       TENANT_FILE_STORAGE_TYPE: 1
+      QUEUE_SERVICE: kafka
+      KAFKA_CLIENT_ID: offchain
+      KAFKA_BROKER_URLS: '["kafka:9092"]'
+      KAFKA_APP_GROUP_ID: nft-marketplace-app-group-id
+      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group-id
+      KAFKA_APP_TOPIC: nft-marketplace-app-topic
+      KAFKA_CHAIN_TOPIC: blockchain
+      # KAFKA_USER=my-user
+      # KAFKA_PASSWORD=zrQcU3Pux4c9
     volumes:
       - offchainstorage:/usr/src/app/files
       - logstorage:/usr/src/app/logs
@@ -142,15 +151,6 @@ services:
       WALLET_URL: https://demo.wallet.casimir.one
       TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
-      QUEUE_SERVICE: kafka
-      KAFKA_CLIENT_ID: offchain
-      KAFKA_BROKER_URLS: '["kafka:9092"]'
-      KAFKA_APP_GROUP_ID: nft-marketplace-app-group-id
-      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group-id
-      KAFKA_APP_TOPIC: nft-marketplace-app-topic
-      KAFKA_CHAIN_TOPIC: blockchain
-      # KAFKA_USER=my-user
-      # KAFKA_PASSWORD=zrQcU3Pux4c9
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webclient.rule=Host(`demo.casimir.one`)"

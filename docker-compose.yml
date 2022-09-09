@@ -142,6 +142,7 @@ services:
       NODE_ENV: development
       PROTOCOL: 2
       TENANT: "6561845613164402145092105428472817005070"
+      SIG_SEED: "quickbrownfoxjumpsoverthelazydog"
       # web server ws and http
       DEIP_SERVER_URL: https://demo.webserver.http.casimir.one
       DEIP_WEB_SOCKET_URL: wss://demo.webserver.ws.casimir.one

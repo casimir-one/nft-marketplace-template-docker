@@ -69,9 +69,11 @@ services:
     depends_on:
       - substrate-node
       - storage
+      - kafka
     links:
       - substrate-node
       - storage
+      - kafka
     expose:
       - "80"
       - "8083"
@@ -131,11 +133,9 @@ services:
     depends_on:
       - substrate-node
       - web-server
-      - kafka
     links:
       - substrate-node
       - web-server
-      - kafka
     # ports:
     #   - "8080:80"
     environment:
@@ -239,6 +239,68 @@ services:
     depends_on:
       - kafka
 
+
+  web-wallet:
+    image: deipworld/deip-web-wallet:latest
+    container_name: web-wallet
+    restart: always
+    depends_on:
+      - web-wallet-server
+    links:
+      - web-wallet-server
+    expose:
+      - "8080"
+    environment:
+      DW_API_URL: http://demo.wallet.webserver.casimir.one
+      DW_NETWORK: wss://demo.webserver.ws.casimir.one
+      DW_PROTOCOL: 2
+      DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT: 1000000000000000000000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webwallet.rule=Host(`demo.wallet.casimir.one`)"
+      - "traefik.http.routers.webwallet.entrypoints=websecure"
+      - "traefik.http.routers.webwallet.tls.certresolver=myresolver"
+      - "traefik.http.routers.webwallet.service=webwallet"
+      - "traefik.http.services.webwallet.loadbalancer.server.port=8080"
+
+
+  web-wallet-server:
+    image: deipworld/deip-web-wallet-server:latest
+    container_name: web-wallet-server
+    restart: always
+    depends_on:
+      - substrate-node
+      - kafka
+    links:
+      - substrate-node
+      - kafka
+    expose:
+      - "3001"
+    environment:
+      PORT: 3001
+      MODE: development
+      DW_PROTOCOL: 2
+      DW_DB_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.casimir.one:27017/deip-wallet?authSource=admin
+      DW_DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
+      DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK: 6000
+      # TODO: remove DW_TENANT_PORTAL
+      DW_TENANT_PORTAL: '{ "pubKey": "ae5b2053e7ed4708eebdc5bc4af553f9c693fc7cf7caab08ec575336b6d53338", "privKey": "f013fcb52dbf677434d5960558880fd0bc0a9586423cd19b7be7c277916581a5" }'
+      DW_KAFKA_CLIENT_ID: offchain
+      DW_KAFKA_BROKER_URLS: '["kafka:9092"]'
+      DW_KAFKA_APP_GROUP_ID: deip-wallet-group-id
+      DW_KAFKA_CHAIN_GROUP_ID: deip-wallet-group-id
+      DW_KAFKA_APP_TOPIC: deip-wallet-topic
+      DW_KAFKA_CHAIN_TOPIC: blockchain
+      DW_SENTRY_DSN: https://78783252fab34a6097e4016782548800@o1270391.ingest.sentry.io/6465321
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webwalletserver.rule=Host(`demo.wallet.webserver.casimir.one`)"
+      - "traefik.http.routers.webwalletserver.entrypoints=websecure"
+      - "traefik.http.routers.webwalletserver.tls.certresolver=myresolver"
+      - "traefik.http.routers.webwalletserver.service=webwalletserver"
+      - "traefik.http.services.webwalletserver.loadbalancer.server.port=3001"
 
 
 volumes:

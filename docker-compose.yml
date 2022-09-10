@@ -100,7 +100,7 @@ services:
       # KAFKA_USER=my-user
       # KAFKA_PASSWORD=zrQcU3Pux4c9
     volumes:
-      - offchainstorage:/usr/src/app/files
+      - filestorage:/usr/src/app/files
       - logstorage:/usr/src/app/logs
     labels:
       - "traefik.enable=true"
@@ -298,6 +298,8 @@ volumes:
   chainstorage:
     external: true
   offchainstorage:
+    external: true
+  filestorage:
     external: true
   logstorage:
     external: true

@@ -21,7 +21,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=egortsaryk@gmail.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--forwardingTimeouts.dialTimeout=120s"
+      - "--serversTransport.forwardingTimeouts.dialTimeout=120s"
     ports:
       - "80:80"
       - "443:443"

@@ -1,5 +1,5 @@
 [blockchain]
-rpc = "ws://substrate-node:9944/"
+rpc = "wss://demo.appchain.ws.casimir.one"
 
 [message_broker]
 kafka_bootstrap_servers = "kafka:9092"

@@ -93,10 +93,10 @@ services:
       TENANT_HOT_WALLET: '{"privKey":"38b6bf99e4b06e64cafeeedf1f418f8f03b472e14ece7f5e5cb4d9aa9e6caef7","daoId":"20d1c50067827d1ba447d1be4a4d5129fb0583ed"}'
       TENANT_FILE_STORAGE_TYPE: 1
       QUEUE_SERVICE: kafka
-      KAFKA_CLIENT_ID: offchain
+      KAFKA_CLIENT_ID: nft-marketplace-client
       KAFKA_BROKER_URLS: '["kafka:9092"]'
-      KAFKA_APP_GROUP_ID: nft-marketplace-app-group-id
-      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group-id
+      KAFKA_APP_GROUP_ID: nft-marketplace-app-group
+      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group
       KAFKA_APP_TOPIC: nft-marketplace-app-topic
       KAFKA_CHAIN_TOPIC: blockchain
       # KAFKA_USER=my-user
@@ -281,13 +281,9 @@ services:
       DW_DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
       DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK: 6000
-      # TODO: remove DW_TENANT_PORTAL
-      DW_TENANT_PORTAL: '{ "pubKey": "ae5b2053e7ed4708eebdc5bc4af553f9c693fc7cf7caab08ec575336b6d53338", "privKey": "f013fcb52dbf677434d5960558880fd0bc0a9586423cd19b7be7c277916581a5" }'
-      DW_KAFKA_CLIENT_ID: offchain
+      DW_KAFKA_CLIENT_ID: deip-wallet-client
       DW_KAFKA_BROKER_URLS: '["kafka:9092"]'
-      DW_KAFKA_APP_GROUP_ID: deip-wallet-group-id
-      DW_KAFKA_CHAIN_GROUP_ID: deip-wallet-group-id
-      DW_KAFKA_APP_TOPIC: deip-wallet-topic
+      DW_KAFKA_CHAIN_GROUP_ID: deip-wallet-chain-group
       DW_KAFKA_CHAIN_TOPIC: blockchain
       DW_SENTRY_DSN: https://78783252fab34a6097e4016782548800@o1270391.ingest.sentry.io/6465321
     labels:

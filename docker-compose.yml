@@ -13,7 +13,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.mongodb.address=:27017"
-      - "--entrypoints.ws.address=:8083"
+      - "--entrypoints.wswebserver.address=:8083"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
@@ -111,19 +111,19 @@ services:
       - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
       - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
 
-      # - "traefik.http.routers.webserver_https.rule=Host(`demo.webserver.ws.casimir.one`)"
-      # - "traefik.http.routers.webserver_https.entrypoints=websecure"
-      # - "traefik.http.routers.webserver_https.tls.certresolver=myresolver"
-      # - "traefik.http.routers.webserver_https.service=webserver_https"
-      # - "traefik.http.services.webserver_https.loadbalancer.server.port=8083"
+      - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver.ws.casimir.one`)"
+      - "traefik.http.routers.webserver_ws.entrypoints=wswebserver"
+      - "traefik.http.routers.webserver_ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.webserver_ws.service=webserver_ws"
+      - "traefik.http.services.webserver_ws.loadbalancer.server.port=8083"
 
-      - traefik.tcp.routers.webserver_ws.entrypoints=ws
-      - traefik.tcp.routers.webserver_ws.tls=true
-      - traefik.tcp.routers.webserver_ws.tls.certresolver=myresolver
-      - traefik.tcp.routers.webserver_ws.rule=HostSNI(`demo.webserver.ws.casimir.one`)
-      - traefik.tcp.routers.webserver_ws.tls.domains[0].main=demo.webserver.ws.casimir.one
-      - traefik.tcp.routers.webserver_ws.service=webserver_ws
-      - traefik.tcp.services.webserver_ws.loadbalancer.server.port=8083
+      # - traefik.tcp.routers.webserver_ws.entrypoints=ws
+      # - traefik.tcp.routers.webserver_ws.tls=true
+      # - traefik.tcp.routers.webserver_ws.tls.certresolver=myresolver
+      # - traefik.tcp.routers.webserver_ws.rule=HostSNI(`demo.webserver.ws.casimir.one`)
+      # - traefik.tcp.routers.webserver_ws.tls.domains[0].main=demo.webserver.ws.casimir.one
+      # - traefik.tcp.routers.webserver_ws.service=webserver_ws
+      # - traefik.tcp.services.webserver_ws.loadbalancer.server.port=8083
 
 
   web-client:

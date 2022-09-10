@@ -70,13 +70,11 @@ services:
     depends_on:
       - substrate-node
       - storage
-      - kafka
-      - event-proxy-client
+      - event-proxy
     links:
       - substrate-node
       - storage
-      - kafka
-      - event-proxy-client
+      - event-proxy
     expose:
       - "80"
     environment:
@@ -266,11 +264,10 @@ services:
     restart: always
     depends_on:
       - substrate-node
-      - kafka
-      - event-proxy-client
+      - event-proxy
     links:
       - substrate-node
-      - kafka
+      - event-proxy
     expose:
       - "3001"
     environment:

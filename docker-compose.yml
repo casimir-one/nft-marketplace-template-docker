@@ -71,10 +71,12 @@ services:
       - substrate-node
       - storage
       - kafka
+      - event-proxy-client
     links:
       - substrate-node
       - storage
       - kafka
+      - event-proxy-client
     expose:
       - "80"
     environment:
@@ -110,25 +112,11 @@ services:
       - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
       - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
 
-      # - "traefik.http.routers.webserver_ws.rule=Host(`demo.webserver.ws.casimir.one`)"
-      # - "traefik.http.routers.webserver_ws.tls=true"
-      # - "traefik.http.routers.webserver_ws.entrypoints=wswebserver"
-      # - "traefik.http.routers.webserver_ws.tls.certresolver=myresolver"
-      # - "traefik.http.routers.webserver_ws.service=webserver_ws"
-      # - "traefik.http.services.webserver_ws.loadbalancer.server.port=8083"
 
   web-client:
     image: deipworld/casimir-nft-marketplace-web-client:latest
     container_name: web-client
     restart: always
-    depends_on:
-      - substrate-node
-      - web-server
-    links:
-      - substrate-node
-      - web-server
-    # ports:
-    #   - "8080:80"
     environment:
       NODE_ENV: development
       PROTOCOL: 2
@@ -179,6 +167,7 @@ services:
 
   zookeeper:
     image: bitnami/zookeeper:3.7
+    container_name: zookeeper
     restart: always
     ports:
       - "2181:2181"
@@ -190,6 +179,7 @@ services:
 
   kafka:
     image: bitnami/kafka:2
+    container_name: kafka
     restart: always
     ports:
       - "9092:9092"
@@ -204,8 +194,8 @@ services:
 
   kafka-ui:
     image: provectuslabs/kafka-ui
-    restart: always
     container_name: kafka-ui
+    restart: always
     expose:
       - "8080"
     restart: always
@@ -222,8 +212,9 @@ services:
       - "traefik.http.services.kafkaui.loadbalancer.server.port=8080"
 
 
-  deip-event-proxy:
+  event-proxy:
     image: "deipworld/event-proxy"
+    container_name: event-proxy
     restart: always
     command: "event-proxy --config=/event-proxy.toml"
     environment:
@@ -232,26 +223,25 @@ services:
       - "./event-proxy.toml:/event-proxy.toml"
     depends_on:
       - kafka
+      - substrate-node
 
 
-  deip-event-proxy-client:
+  event-proxy-client:
     image: "deipworld/event-proxy-client"
+    container_name: event-proxy-client
     restart: always
     command: "event-proxy-client"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
       - kafka
+      - event-proxy
 
 
   web-wallet:
     image: deipworld/deip-web-wallet:latest
     container_name: web-wallet
     restart: always
-    depends_on:
-      - web-wallet-server
-    links:
-      - web-wallet-server
     expose:
       - "8080"
    #environment:
@@ -277,6 +267,7 @@ services:
     depends_on:
       - substrate-node
       - kafka
+      - event-proxy-client
     links:
       - substrate-node
       - kafka

@@ -124,6 +124,7 @@ services:
       # web server ws and http
       DEIP_SERVER_URL: https://demo.webserver.http.casimir.one
       DEIP_WEB_SOCKET_URL: wss://demo.webserver.http.casimir.one
+      DEIP_WEB_SOCKET_TIMEOUT: 120000
       # chain node
       DEIP_FULL_NODE_URL: wss://demo.appchain.ws.casimir.one
       # wallet

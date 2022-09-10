@@ -77,7 +77,8 @@ services:
       - kafka
     expose:
       - "80"
-      - "8083"
+    ports:
+      - "8083:8083"
     environment:
       NODE_ENV: development
       PROTOCOL: 2

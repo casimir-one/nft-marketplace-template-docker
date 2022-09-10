@@ -5,9 +5,9 @@ rpc = "ws://substrate-node:9944/"
 kafka_bootstrap_servers = "kafka:9092"
 
 [offchain]
-#[offchain.last_known_block]
+[offchain.last_known_block]
 ## Uncomment this section to be able to set last-known-block 
 ## for the dummy offchain-service-client
-#number = 0
-#hash = "0x24e1f2517d77bd828896cdc2d4710edd3d67b1ac26e883130a622ab5ff37fa1e"
-#parent_hash = "0x0000000000000000000000000000000000000000000000000000000000000000"
+number = 21634
+hash = "0x3364a0d828b52cb767c9634f33e3f9337d00f9e30e51ed92a8427ee08116879f"
+parent_hash = "0xd7d82904a58cb1c267cd2a6b0d4af66f87379d157182dd43a03df6fb608fdd5c"

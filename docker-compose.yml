@@ -226,16 +226,16 @@ services:
       - substrate-node
 
 
-  event-proxy-client:
-    image: "deipworld/event-proxy-client"
-    container_name: event-proxy-client
-    restart: always
-    command: "event-proxy-client"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
-    depends_on:
-      - kafka
-      - event-proxy
+  # event-proxy-client:
+  #   image: "deipworld/event-proxy-client"
+  #   container_name: event-proxy-client
+  #   restart: always
+  #   command: "event-proxy-client"
+  #   environment:
+  #     KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  #   depends_on:
+  #     - kafka
+  #     - event-proxy
 
 
   web-wallet:

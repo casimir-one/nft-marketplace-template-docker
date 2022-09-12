@@ -35,7 +35,8 @@ setupTenantPortal()
 
 async function setupTenantPortal() {
   console.log(`Setting up Tenant Portal ...`);
-  await createReadModelStorage();
+  await createCasimirStorage();
+  await createWalletStorage();
   await createFaucetDao();
   await createTenantDao();
   await createUsersDaos();
@@ -226,7 +227,7 @@ async function createUsersDaos() {
 }
 
 
-async function createReadModelStorage() {
+async function createCasimirStorage() {
   const mongoTools = new MongoTools();
   const mongorestorePromise = mongoTools.mongorestore({
     uri: config.PORTAL_STORAGE_URL,
@@ -243,6 +244,23 @@ async function createReadModelStorage() {
   await mongorestorePromise;
 }
 
+
+async function createWalletStorage() {
+  const mongoTools = new MongoTools();
+  const mongorestorePromise = mongoTools.mongorestore({
+    uri: config.PORTAL_STORAGE_URL,
+    dumpFile: `${__dirname}/deip-wallet.gz`,
+  })
+    .then((success) => {
+      console.info("success", success.message);
+      if (success.stderr) {
+        console.info("stderr:\n", success.stderr); // mongorestore binary write details on stderr
+      }
+    })
+    .catch((err) => console.error("error", err));
+
+  await mongorestorePromise;
+}
 
 function getDaoCreator(seed) {
   const { daoId: faucetDaoId } = config.FAUCET_DAO;

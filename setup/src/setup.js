@@ -230,7 +230,7 @@ async function createReadModelStorage() {
   const mongoTools = new MongoTools();
   const mongorestorePromise = mongoTools.mongorestore({
     uri: config.PORTAL_STORAGE_URL,
-    dumpFile: `${__dirname}/nft-marketplace-storage.gz`,
+    dumpFile: `${__dirname}/casimir-storage.gz`,
   })
     .then((success) => {
       console.info("success", success.message);

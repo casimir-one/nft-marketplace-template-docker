@@ -1,0 +1,360 @@
+version: "3.3"
+
+services:
+
+  traefik:
+    image: "traefik:v2.8"
+    container_name: "traefik"
+    restart: always
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--providers.docker=true"
+      - "--providers.docker.network=local_casimir_nft_marketplace"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      # - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.mongodb.address=:27017"
+      # - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      # - "--entrypoints.web.http.redirections.entrypoint.scheme=http"
+      # - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - "--certificatesresolvers.myresolver.acme.email=egortsaryk@gmail.com"
+      # - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--serversTransport.forwardingTimeouts.dialTimeout=120s"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "27017:27017"
+    volumes:
+      # - "letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - local_casimir_nft_marketplace
+
+  substrate-node:
+    image: deipworld/appchain-deip:latest
+    container_name: substrate-node
+    restart: always
+    command: appchain-deip --dev --ws-external --rpc-external --rpc-methods=Unsafe --rpc-cors=all --base-path=/var/lib/deipd
+    expose:
+      - "9944"
+      - "9933"
+    volumes:
+      - local_casimir_chainstorage:/var/lib/deipd
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 2048M
+        reservations:
+          memory: 1024M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node_ws.rule=Host(`local.appchain.ws.casimir.one`)"
+      # - "traefik.http.routers.node_ws.entrypoints=websecure"
+      # - "traefik.http.routers.node_ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.node_ws.service=node_ws"
+      - "traefik.http.services.node_ws.loadbalancer.server.port=9944"
+      
+      - "traefik.http.routers.node_http.rule=Host(`local.appchain.http.casimir.one`)"
+      # - "traefik.http.routers.node_http.entrypoints=websecure"
+      # - "traefik.http.routers.node_http.tls.certresolver=myresolver"
+      - "traefik.http.routers.node_http.service=node_http"
+      - "traefik.http.services.node_http.loadbalancer.server.port=9933"
+    networks:
+      - local_casimir_nft_marketplace
+
+  web-server:
+    image: deipworld/casimir-nft-marketplace-web-server:latest
+    container_name: web-server
+    restart: always
+    depends_on:
+      - substrate-node
+      - storage
+      - event-proxy
+    links:
+      - substrate-node
+      - storage
+      - event-proxy
+      - kafka
+    expose:
+      - "80"
+    environment:
+      NODE_ENV: development
+      PROTOCOL: 2
+      PORT: 80
+      DEIP_FULL_NODE_URL: http://substrate-node:9933
+      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@storage:27017/casimir-storage?authSource=admin
+      CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      CHAIN_BLOCK_INTERVAL_MILLIS: 6000
+      TENANT: "6561845613164402145092105428472817005070"
+      TENANT_PRIV_KEY: "1d24d7eda9803457dcea233872d513f4468d41b7a8b77555c161be1d1917330c"
+      TENANT_PORTAL: '{"privKey":"1265fe9c39e665908f2d6fda3f0371d34de255e4420eb0aaa2907a8d80836d99","pubKey":"22688b484f3e0dde55bd52221fd9ba806c8af5388e02543e14fbf3a639d4d825"}'
+      TENANT_HOT_WALLET: '{"privKey":"38b6bf99e4b06e64cafeeedf1f418f8f03b472e14ece7f5e5cb4d9aa9e6caef7","daoId":"20d1c50067827d1ba447d1be4a4d5129fb0583ed"}'
+      TENANT_FILE_STORAGE_TYPE: 1
+      QUEUE_SERVICE: kafka
+      KAFKA_CLIENT_ID: nft-marketplace-client
+      KAFKA_BROKER_URLS: '["kafka:9092"]'
+      KAFKA_APP_GROUP_ID: nft-marketplace-app-group
+      KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group
+      KAFKA_APP_TOPIC: nft-marketplace-app-topic
+      KAFKA_CHAIN_TOPIC: blockchain
+      # KAFKA_USER=my-user
+      # KAFKA_PASSWORD=zrQcU3Pux4c9
+    volumes:
+      - local_casimir_filestorage:/usr/src/app/files
+      - local_casimir_logstorage:/usr/src/app/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webserver_http.rule=Host(`local.webserver.http.casimir.one`)"
+      - "traefik.http.routers.webserver_http.entrypoints=web"
+      # - "traefik.http.routers.webserver_http.entrypoints=websecure"
+      - "traefik.http.routers.webserver_http.service=webserver_http"
+      # - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
+      - "traefik.http.services.webserver_http.loadbalancer.server.port=80"
+      # - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=*" 
+      # - "traefik.http.routers.service.middlewares=serviceheaders"
+    networks: 
+      - local_casimir_nft_marketplace
+
+  web-client:
+    image: deipworld/casimir-nft-marketplace-web-client:latest
+    container_name: web-client
+    restart: always
+    environment:
+      NODE_ENV: development
+      PROTOCOL: 2
+      TENANT: "6561845613164402145092105428472817005070"
+      SIG_SEED: "quickbrownfoxjumpsoverthelazydog"
+      # web server ws and http
+      DEIP_SERVER_URL: http://local.webserver.http.casimir.one
+      DEIP_WEB_SOCKET_URL: ws://local.webserver.http.casimir.one
+      DEIP_WEB_SOCKET_TIMEOUT: 120000
+      # chain node
+      DEIP_FULL_NODE_URL: ws://local.appchain.ws.casimir.one
+      # wallet
+      WALLET_URL: http://local.wallet.casimir.one
+      TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
+      CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webclient.rule=Host(`local.casimir.one`)"
+      # - "traefik.http.routers.webclient.entrypoints=websecure"
+      # - "traefik.http.routers.webclient.tls.certresolver=myresolver"
+      - "traefik.http.routers.webclient.service=webclient"
+      - "traefik.http.services.webclient.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=*" 
+      - "traefik.http.routers.service.middlewares=serviceheaders"
+    networks: 
+      - local_casimir_nft_marketplace
+
+  storage:
+    image: mongo:3.6.5
+    container_name: storage
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=casimir
+      - MONGO_INITDB_ROOT_PASSWORD=xZ6GZunKhaUzX44J
+    volumes: 
+      - local_casimir_offchainstorage:/data/db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.storage.entrypoints=mongodb"
+      - "traefik.tcp.routers.storage.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.storage.tls=false"
+      - "traefik.tcp.services.storage.loadbalancer.server.port=27017"
+      - "traefik.tcp.routers.storage.service=storage"
+
+      # https://stackoverflow.com/questions/71300670/how-to-setup-mongodb-with-traefik-and-docker-compose
+      # https://community.traefik.io/t/tls-with-letsencrypt-for-tcp-to-mongo/4957
+      # - traefik.tcp.routers.storage.tls=true
+      # - traefik.tcp.routers.storage.tls.certresolver=myresolver
+      # - traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)
+      # - traefik.tcp.routers.storage.tls.domains[0].main=demo.storage.casimir.one
+    networks: 
+      - local_casimir_nft_marketplace
+
+  zookeeper:
+    image: bitnami/zookeeper:3.7
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    volumes:
+      - "local_casimir_zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks: 
+      - local_casimir_nft_marketplace
+
+  kafka:
+    image: bitnami/kafka:2
+    container_name: kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    volumes:
+      - "local_casimir_kafka_data:/bitnami"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+    networks: 
+      - local_casimir_nft_marketplace
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: always
+    expose:
+      - "8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=casimir
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kafkaui.rule=Host(`local.kafka.casimir.one`)"
+      # - "traefik.http.routers.kafkaui.entrypoints=websecure"
+      # - "traefik.http.routers.kafkaui.tls.certresolver=myresolver"
+      - "traefik.http.routers.kafkaui.service=kafkaui"
+      - "traefik.http.services.kafkaui.loadbalancer.server.port=8080"
+    networks: 
+      - local_casimir_nft_marketplace
+
+  event-proxy:
+    image: "deipworld/event-proxy"
+    container_name: event-proxy
+    restart: always
+    command: "event-proxy --config=/event-proxy.toml"
+    environment:
+      RUST_LOG: "error,librdkafka=error,rdkafka::client=error"
+    volumes:
+      - "./event-proxy.toml:/event-proxy.toml"
+    depends_on:
+      - kafka
+      - substrate-node
+    networks: 
+      - local_casimir_nft_marketplace
+
+  # event-proxy-client:
+  #   image: "deipworld/event-proxy-client"
+  #   container_name: event-proxy-client
+  #   restart: always
+  #   command: "event-proxy-client"
+  #   environment:
+  #     KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  #   depends_on:
+  #     - kafka
+  #     - event-proxy
+  #   networks: 
+  #     - local_casimir_nft_marketplace
+
+  web-wallet:
+    # image: deipworld/deip-web-wallet:latest
+    image: deipworld/local-deip-web-wallet:latest
+    container_name: web-wallet
+    restart: always
+    expose:
+      - "8080"
+   #environment:
+      # Envs are injected to static content :(
+      #DW_API_URL: http://local.wallet.webserver.casimir.one
+      #DW_NETWORK: ws://local.appchain.ws.casimir.one
+      #DW_PROTOCOL: 2
+      #DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      #DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT: 1000000000000000000000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webwallet.rule=Host(`local.wallet.casimir.one`)"
+      # - "traefik.http.routers.webwallet.entrypoints=websecure"
+      # - "traefik.http.routers.webwallet.tls.certresolver=myresolver"
+      - "traefik.http.routers.webwallet.service=webwallet"
+      - "traefik.http.services.webwallet.loadbalancer.server.port=8080"
+    networks: 
+      - local_casimir_nft_marketplace
+
+  web-wallet-server:
+    image: deipworld/deip-web-wallet-server:latest
+    container_name: web-wallet-server
+    restart: always
+    depends_on:
+      - substrate-node
+      - event-proxy
+    links:
+      - substrate-node
+      - event-proxy
+    expose:
+      - "3001"
+    environment:
+      PORT: 3001
+      MODE: development
+      DW_PROTOCOL: 2
+      DW_DB_URL: mongodb://casimir:xZ6GZunKhaUzX44J@storage:27017/deip-wallet?authSource=admin
+      DW_DEIP_FULL_NODE_URL: http://substrate-node:9933
+      DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
+      DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK: 6000
+      DW_KAFKA_CLIENT_ID: deip-wallet-client
+      DW_KAFKA_BROKER_URLS: '["kafka:9092"]'
+      DW_KAFKA_CHAIN_GROUP_ID: deip-wallet-chain-group
+      DW_KAFKA_CHAIN_TOPIC: blockchain
+      DW_SENTRY_DSN: http://78783252fab34a6097e4016782548800@o1270391.ingest.sentry.io/6465321
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webwalletserver.rule=Host(`local.wallet.webserver.casimir.one`)"
+      - "traefik.http.routers.webwalletserver.entrypoints=web"
+      # - "traefik.http.routers.webwalletserver.entrypoints=websecure"
+      # - "traefik.http.routers.webwalletserver.tls.certresolver=myresolver"
+      - "traefik.http.routers.webwalletserver.service=webwalletserver"
+      - "traefik.http.services.webwalletserver.loadbalancer.server.port=3001"
+    networks: 
+      - local_casimir_nft_marketplace
+
+
+  chain-dashboard:
+    image: deipworld/testnet-chain-dashboard:latest
+    container_name: chain-dashboard
+    restart: always
+    environment:
+      # DEIP variables
+      WS_URL: ws://local.appchain.ws.casimir.one
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chaindashboard.rule=Host(`local.dashboard.casimir.one`)"
+      # - "traefik.http.routers.chaindashboard.entrypoints=websecure"
+      # - "traefik.http.routers.chaindashboard.tls.certresolver=myresolver"
+      - "traefik.http.routers.chaindashboard.service=chaindashboard"
+      - "traefik.http.services.chaindashboard.loadbalancer.server.port=80"
+    networks: 
+      - local_casimir_nft_marketplace
+
+
+volumes:
+  # letsencrypt:
+  #   external: true
+  local_casimir_chainstorage:
+    external: true
+  local_casimir_offchainstorage:
+    external: true
+  local_casimir_filestorage:
+    external: true
+  local_casimir_logstorage:
+    external: true
+  local_casimir_zookeeper_data:
+    external: true
+  local_casimir_kafka_data:
+    external: true
+
+networks:
+  local_casimir_nft_marketplace:
+    external: true
+    # aliases:
+    #   - local.webserver.http.casimir.one
+      # - fozzie-label.localhost
+      # - fozzie-gateway.localhost

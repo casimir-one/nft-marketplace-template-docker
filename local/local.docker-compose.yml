@@ -84,7 +84,7 @@ services:
       PROTOCOL: 2
       PORT: 80
       DEIP_FULL_NODE_URL: http://deip-substrate-node:9933
-      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@cas-nft-marketplace-storage:27017/casimir-storage?authSource=admin
+      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://cas-nft-marketplace-storage:27017/casimir-storage?authSource=admin
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       CHAIN_BLOCK_INTERVAL_MILLIS: 6000
       TENANT: "6561845613164402145092105428472817005070"
@@ -152,9 +152,6 @@ services:
     restart: always
     expose:
       - "27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=casimir
-      - MONGO_INITDB_ROOT_PASSWORD=xZ6GZunKhaUzX44J
     volumes: 
       - cas_nft_marketplace_offchain_storage:/data/db
     labels:
@@ -293,7 +290,7 @@ services:
       PORT: 80
       MODE: development
       DW_PROTOCOL: 2
-      DW_DB_URL: mongodb://casimir:xZ6GZunKhaUzX44J@cas-nft-marketplace-storage:27017/deip-wallet?authSource=admin
+      DW_DB_URL: mongodb://cas-nft-marketplace-storage:27017/deip-wallet?authSource=admin
       DW_DEIP_FULL_NODE_URL: http://deip-substrate-node:9933
       DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK: 6000

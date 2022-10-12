@@ -1,4 +1,4 @@
-### Requirements
+## Requirements
 
 - docker
 - docker-compose
@@ -6,58 +6,58 @@
 - mongotools: [mongorestore](https://www.mongodb.com/docs/database-tools/mongorestore/), [mongodump](https://www.mongodb.com/docs/database-tools/mongodump/) (for database preset configuration)
 - Make utility [make](https://www.gnu.org/software/make/)
 
----
+## Setup
 
-### Launch on local environment
-
-##### 1. Add the following records to your local `/etc/hosts` file
+Add the following records to your local `/etc/hosts` file
 
 ```
 127.0.0.1 local.casimir.one local.webserver.http.casimir.one local.appchain.ws.casimir.one local.appchain.http.casimir.one local.wallet.casimir.one local.wallet.webserver.casimir.one local.kafka.casimir.one local.dashboard.casimir.one
 ```
 
-##### 2. Run the application in local docker environment
+---
+
+### Run the application on local environment
+
+##### Run entire application in local docker environment
 
 ```sh
 make start-local
 ```
 
-If you need to clear local environment from the application containers and data volumes, run:
+##### Clear local environment
 
 ```sh
-make clean-local
-```
-
-Restart the application in local environment and purge existing data volumes
-
-```sh
-make restart-local
+make stop-local
 ```
 
 ---
 
-### Development on local environment
+### Backend and Frontend development on local environment
 
-##### 1. Add the following records to your local `/etc/hosts` file
-
-```
-127.0.0.1 local.casimir.one local.webserver.http.casimir.one local.appchain.ws.casimir.one local.appchain.http.casimir.one local.wallet.casimir.one local.wallet.webserver.casimir.one local.kafka.casimir.one local.dashboard.casimir.one
-```
-
-##### 2. Run microservices in local docker environment
+##### Run required microservices in local docker environment
 
 ```sh
-make start-dev
+make start-backend-dev
 ```
 
-If you need to clear local environment from the application containers and data volumes, run:
+##### Clear local environment
 
 ```sh
-make clean-dev
+make stop-backend-dev
 ```
 
-To restart microservices in local environment and purge existing data volumes:
+---
+
+### Frontend development on local environment
+
+##### Run required microservices in local docker environment
 
 ```sh
-make restart-dev
+make start-frontend-dev
+```
+
+##### Clear local environment
+
+```sh
+make stop-frontend-dev
 ```

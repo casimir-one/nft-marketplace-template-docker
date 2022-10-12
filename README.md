@@ -6,6 +6,8 @@
 - mongotools: [mongorestore](https://www.mongodb.com/docs/database-tools/mongorestore/), [mongodump](https://www.mongodb.com/docs/database-tools/mongodump/) (for database preset configuration)
 - Make utility [make](https://www.gnu.org/software/make/)
 
+---
+
 ### Launch on local environment
 
 ##### 1. Add the following records to your local `/etc/hosts` file
@@ -31,6 +33,8 @@ Restart the application in local environment and purge existing data volumes
 ```sh
 make restart-local
 ```
+
+---
 
 ### Development on local environment
 

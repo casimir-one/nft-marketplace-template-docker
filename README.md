@@ -32,25 +32,9 @@ make stop-local
 
 ---
 
-### Backend and Frontend development on local environment
-
-##### Run required microservices in local docker environment
-
-```sh
-make start-backend-dev
-```
-
-##### Clear local environment
-
-```sh
-make stop-backend-dev
-```
-
----
-
 ### Frontend development on local environment
 
-##### Run required microservices in local docker environment
+##### Run required microservices for frontend development in local docker environment
 
 ```sh
 make start-frontend-dev
@@ -60,4 +44,20 @@ make start-frontend-dev
 
 ```sh
 make stop-frontend-dev
+```
+
+---
+
+### Backend and Frontend development on local environment
+
+##### Run required microservices for frontend/backend development in local docker environment
+
+```sh
+make start-backend-frontend-dev
+```
+
+##### Clear local environment
+
+```sh
+make stop-backend-frontend-dev
 ```

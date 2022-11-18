@@ -64,7 +64,7 @@ services:
 
 
   web-server:
-    image: deipworld/casimir-nft-marketplace-web-server:latest
+    image: deipworld/moti-web-server:latest
     container_name: web-server
     restart: always
     depends_on:
@@ -97,11 +97,11 @@ services:
       KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group
       KAFKA_APP_TOPIC: nft-marketplace-app-topic
       KAFKA_CHAIN_TOPIC: blockchain
-      APP_ASSET_DETAILS_BASE_URL: "http://localhost:8081/#/asset/details"
+      APP_ASSET_DETAILS_BASE_URL: "https://app.moti.one/#/asset/details"
       GMAIL_USER: "moti.one.app@gmail.com"
-      GMAIL_CLIENT_ID: ""
-      GMAIL_CLIENT_SECRET: ""
-      GMAIL_REFRESH_TOKEN: ""
+      GMAIL_CLIENT_ID: "498773277320-hcgpsu7lfa44nthi16fm3rdil3n3s68r.apps.googleusercontent.com"
+      GMAIL_CLIENT_SECRET: "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"
+      GMAIL_REFRESH_TOKEN: "1//04qdtoZfEOlR4CgYIARAAGAQSNwF-L9IrFCArVt5qz_AHa9I_sVPEx6uh_P0ImVyoUO2rK4vnwoDOvIFxqHJetNaA560VbCJqSRI"
       # KAFKA_USER=my-user
       # KAFKA_PASSWORD=zrQcU3Pux4c9
     volumes:
@@ -117,7 +117,7 @@ services:
 
 
   web-client:
-    image: deipworld/casimir-nft-marketplace-web-client:latest
+    image: deipworld/moti-web-client:latest
     container_name: web-client
     restart: always
     environment:

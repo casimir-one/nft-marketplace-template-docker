@@ -6,8 +6,8 @@ echo "Starting appliction containers ..."
 docker-compose -f ./demo/demo.docker-compose.yml up -d --force-recreate
 echo "Waiting for Casimir application containers to start ..."
 cd ./presetup && sleep 3
-# echo "Installing npm packages for a setup script ..."
-# npm install
-# echo "Running the setup script application ..."
-# npm run setup
+echo "Installing npm packages for a setup script ..."
+npm install
+echo "Running the setup script application ..."
+npm run setup
 echo "Casimir application containers started !"

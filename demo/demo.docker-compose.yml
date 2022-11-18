@@ -64,7 +64,7 @@ services:
 
 
   web-server:
-    image: deipworld/casimir-nft-marketplace-web-server:latest
+    image: deipworld/moti-web-server:latest
     container_name: web-server
     restart: always
     depends_on:
@@ -117,7 +117,7 @@ services:
 
 
   web-client:
-    image: deipworld/casimir-nft-marketplace-web-client:latest
+    image: deipworld/moti-web-client:latest
     container_name: web-client
     restart: always
     environment:

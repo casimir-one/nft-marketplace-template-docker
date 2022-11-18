@@ -50,13 +50,13 @@ services:
           memory: 1024M
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.node_ws.rule=Host(`demo.appchain.ws.casimir.one`)"
+      - "traefik.http.routers.node_ws.rule=Host(`appchain.ws.moti.one`)"
       - "traefik.http.routers.node_ws.entrypoints=websecure"
       - "traefik.http.routers.node_ws.tls.certresolver=myresolver"
       - "traefik.http.routers.node_ws.service=node_ws"
       - "traefik.http.services.node_ws.loadbalancer.server.port=9944"
       
-      - "traefik.http.routers.node_http.rule=Host(`demo.appchain.http.casimir.one`)"
+      - "traefik.http.routers.node_http.rule=Host(`appchain.http.moti.one`)"
       - "traefik.http.routers.node_http.entrypoints=websecure"
       - "traefik.http.routers.node_http.tls.certresolver=myresolver"
       - "traefik.http.routers.node_http.service=node_http"
@@ -81,8 +81,8 @@ services:
       NODE_ENV: development
       PROTOCOL: 2
       PORT: 80
-      DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
-      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.casimir.one:27017/casimir-storage?authSource=admin
+      DEIP_FULL_NODE_URL: https://appchain.http.moti.one
+      DEIP_MONGO_STORAGE_CONNECTION_URL: mongodb://casimir:xZ6GZunKhaUzX44J@app.moti.one:27017/casimir-storage?authSource=admin
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       CHAIN_BLOCK_INTERVAL_MILLIS: 6000
       TENANT: "6561845613164402145092105428472817005070"
@@ -97,6 +97,11 @@ services:
       KAFKA_CHAIN_GROUP_ID: nft-marketplace-chain-group
       KAFKA_APP_TOPIC: nft-marketplace-app-topic
       KAFKA_CHAIN_TOPIC: blockchain
+      APP_ASSET_DETAILS_BASE_URL: "http://localhost:8081/#/asset/details"
+      GMAIL_USER: "moti.one.app@gmail.com"
+      GMAIL_CLIENT_ID: ""
+      GMAIL_CLIENT_SECRET: ""
+      GMAIL_REFRESH_TOKEN: ""
       # KAFKA_USER=my-user
       # KAFKA_PASSWORD=zrQcU3Pux4c9
     volumes:
@@ -104,7 +109,7 @@ services:
       - logstorage:/usr/src/app/logs
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webserver_http.rule=Host(`demo.webserver.http.casimir.one`)"
+      - "traefik.http.routers.webserver_http.rule=Host(`webserver.http.moti.one`)"
       - "traefik.http.routers.webserver_http.entrypoints=websecure"
       - "traefik.http.routers.webserver_http.service=webserver_http"
       - "traefik.http.routers.webserver_http.tls.certresolver=myresolver"
@@ -121,18 +126,18 @@ services:
       TENANT: "6561845613164402145092105428472817005070"
       SIG_SEED: "quickbrownfoxjumpsoverthelazydog"
       # web server ws and http
-      DEIP_SERVER_URL: https://demo.webserver.http.casimir.one
-      DEIP_WEB_SOCKET_URL: wss://demo.webserver.http.casimir.one
+      DEIP_SERVER_URL: https://webserver.http.moti.one
+      DEIP_WEB_SOCKET_URL: wss://webserver.http.moti.one
       DEIP_WEB_SOCKET_TIMEOUT: 120000
       # chain node
-      DEIP_FULL_NODE_URL: wss://demo.appchain.ws.casimir.one
+      DEIP_FULL_NODE_URL: wss://appchain.ws.moti.one
       # wallet
-      WALLET_URL: https://demo.wallet.casimir.one
+      WALLET_URL: https://wallet.moti.one
       TENANT_HOT_WALLET_DAO_ID: '20d1c50067827d1ba447d1be4a4d5129fb0583ed'
       CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webclient.rule=Host(`demo.casimir.one`)"
+      - "traefik.http.routers.webclient.rule=Host(`app.moti.one`)"
       - "traefik.http.routers.webclient.entrypoints=websecure"
       - "traefik.http.routers.webclient.tls.certresolver=myresolver"
       - "traefik.http.routers.webclient.service=webclient"
@@ -160,8 +165,8 @@ services:
       # https://community.traefik.io/t/tls-with-letsencrypt-for-tcp-to-mongo/4957
       # - traefik.tcp.routers.storage.tls=true
       # - traefik.tcp.routers.storage.tls.certresolver=myresolver
-      # - traefik.tcp.routers.storage.rule=HostSNI(`demo.storage.casimir.one`)
-      # - traefik.tcp.routers.storage.tls.domains[0].main=demo.storage.casimir.one
+      # - traefik.tcp.routers.storage.rule=HostSNI(`storage.moti.one`)
+      # - traefik.tcp.routers.storage.tls.domains[0].main=storage.moti.one
 
 
   zookeeper:
@@ -204,7 +209,7 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kafkaui.rule=Host(`demo.kafka.casimir.one`)"
+      - "traefik.http.routers.kafkaui.rule=Host(`kafka.moti.one`)"
       - "traefik.http.routers.kafkaui.entrypoints=websecure"
       - "traefik.http.routers.kafkaui.tls.certresolver=myresolver"
       - "traefik.http.routers.kafkaui.service=kafkaui"
@@ -245,14 +250,14 @@ services:
       - "8080"
    #environment:
       # Envs are injected to static content :(
-      #DW_API_URL: https://demo.wallet.webserver.casimir.one
-      #DW_NETWORK: wss://demo.appchain.ws.casimir.one
+      #DW_API_URL: https://wallet.webserver.moti.one
+      #DW_NETWORK: wss://appchain.ws.moti.one
       #DW_PROTOCOL: 2
       #DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       #DW_ACCOUNT_DEFAULT_FUNDING_AMOUNT: 1000000000000000000000
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webwallet.rule=Host(`demo.wallet.casimir.one`)"
+      - "traefik.http.routers.webwallet.rule=Host(`wallet.moti.one`)"
       - "traefik.http.routers.webwallet.entrypoints=websecure"
       - "traefik.http.routers.webwallet.tls.certresolver=myresolver"
       - "traefik.http.routers.webwallet.service=webwallet"
@@ -275,8 +280,8 @@ services:
       PORT: 3001
       MODE: development
       DW_PROTOCOL: 2
-      DW_DB_URL: mongodb://casimir:xZ6GZunKhaUzX44J@demo.casimir.one:27017/deip-wallet?authSource=admin
-      DW_DEIP_FULL_NODE_URL: https://demo.appchain.http.casimir.one
+      DW_DB_URL: mongodb://casimir:xZ6GZunKhaUzX44J@app.moti.one:27017/deip-wallet?authSource=admin
+      DW_DEIP_FULL_NODE_URL: https://appchain.http.moti.one
       DW_CORE_ASSET: '{ "id": 0, "symbol": "DEIP", "precision": 18 }'
       DW_DEIP_APPCHAIN_MILLISECS_PER_BLOCK: 6000
       DW_KAFKA_CLIENT_ID: deip-wallet-client
@@ -286,7 +291,7 @@ services:
       DW_SENTRY_DSN: https://78783252fab34a6097e4016782548800@o1270391.ingest.sentry.io/6465321
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webwalletserver.rule=Host(`demo.wallet.webserver.casimir.one`)"
+      - "traefik.http.routers.webwalletserver.rule=Host(`wallet.webserver.moti.one`)"
       - "traefik.http.routers.webwalletserver.entrypoints=websecure"
       - "traefik.http.routers.webwalletserver.tls.certresolver=myresolver"
       - "traefik.http.routers.webwalletserver.service=webwalletserver"
